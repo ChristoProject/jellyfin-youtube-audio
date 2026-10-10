@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "1.0.0.4",
+        "changelog": "Corretto l'avvio della richiesta dalla pagina del plugin.",
+        "targetAbi": "10.11.10.0",
+        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.4/YouTubeAudio-1.0.0.4.zip",
+        "checksum": "045dccb133a76adeedfb7f42071cfbe8",
+        "timestamp": "2026-10-10T15:30:00Z"
+      },
+      {
         "version": "1.0.0.3",
         "changelog": "Corretto il percorso Musica in /Media/Musica.",
         "targetAbi": "10.11.10.0",
