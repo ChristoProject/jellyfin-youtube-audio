@@ -7,8 +7,8 @@
     <form id="youtubeAudioForm">
       <h1>YouTube Audio Downloader</h1>
       <p>Le destinazioni sono già impostate per il container Jellyfin:</p>
-      <ul><li>Musica: <code>/Media/Music</code></li><li>Podcast: <code>/Media/Podcast</code></li></ul>
-      <input id="MusicDestination" type="hidden" value="/Media/Music">
+      <ul><li>Musica: <code>/Media/Musica</code></li><li>Podcast: <code>/Media/Podcast</code></li></ul>
+      <input id="MusicDestination" type="hidden" value="/Media/Musica">
       <input id="PodcastDestination" type="hidden" value="/Media/Podcast">
       <button type="submit">Salva configurazione</button>
     </form>
@@ -28,8 +28,8 @@
   page.addEventListener('pageshow', loadConfig);
   document.querySelector('#youtubeAudioForm').addEventListener('submit', saveConfig);
   document.querySelector('#requestForm').addEventListener('submit', createRequest);
-  async function loadConfig() { document.querySelector('#MusicDestination').value='/Media/Music'; document.querySelector('#PodcastDestination').value='/Media/Podcast'; refresh(); }
-  async function saveConfig(e) { e.preventDefault(); try { const c=await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); c.MusicDestination='/Media/Music'; c.PodcastDestination='/Media/Podcast'; await ApiClient.updatePluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20',c); Dashboard.alert('Destinazioni fisse: /Media/Music e /Media/Podcast'); } catch (error) { Dashboard.alert('Impossibile salvare la configurazione: '+error); } }
+  async function loadConfig() { document.querySelector('#MusicDestination').value='/Media/Musica'; document.querySelector('#PodcastDestination').value='/Media/Podcast'; refresh(); }
+  async function saveConfig(e) { e.preventDefault(); try { const c=await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); c.MusicDestination='/Media/Musica'; c.PodcastDestination='/Media/Podcast'; await ApiClient.updatePluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20',c); Dashboard.alert('Destinazioni fisse: /Media/Musica e /Media/Podcast'); } catch (error) { Dashboard.alert('Impossibile salvare la configurazione: '+error); } }
   async function createRequest(e) { e.preventDefault(); try { const response=await ApiClient.ajax({type:'POST',url:ApiClient.getUrl('YouTubeAudio/requests'),data:JSON.stringify({url:document.querySelector('#sourceUrl').value,category:document.querySelector('#category').value}),contentType:'application/json',dataType:'json'}); Dashboard.alert('Richiesta avviata'); refresh(); } catch (error) { Dashboard.alert('Download non avviato: controlla categoria, URL e destinazioni. '+error); } }
   async function refresh() { try { const data=await ApiClient.getJSON(ApiClient.getUrl('YouTubeAudio/requests')); const requestsElement=document.querySelector('#requests'); requestsElement.innerHTML=data.map(r=>'<section><h3>'+escapeHtml(r.url)+'</h3>'+r.items.map(i=>'<p>'+escapeHtml(i.title)+' — '+i.status+' ('+i.progress+'%)'+(i.error?' — '+escapeHtml(i.error):'')+'</p>').join('')+'</section>').join(''); } catch (error) { console.error('YouTube Audio: impossibile leggere le richieste', error); } finally { setTimeout(refresh,3000); } }
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
