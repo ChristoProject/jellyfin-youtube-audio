@@ -14,53 +14,6 @@
         "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.6/YouTubeAudio-1.0.0.6.zip",
         "checksum": "f495e11d54f20ec13aece01d21a7902d",
         "timestamp": "2026-10-10T15:50:00Z"
-      },
-      {
-        "version": "1.0.0.5",
-        "changelog": "Aggiornato yt-dlp; verificato il download reale da YouTube.",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.5/YouTubeAudio-1.0.0.5.zip",
-        "checksum": "324109a7a10959e6c8e17e5872f7f0ab",
-        "timestamp": "2026-10-10T15:40:00Z"
-      },
-      {
-        "version": "1.0.0.4",
-        "changelog": "Corretto l'avvio della richiesta dalla pagina del plugin.",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.4/YouTubeAudio-1.0.0.4.zip",
-        "checksum": "045dccb133a76adeedfb7f42071cfbe8",
-        "timestamp": "2026-10-10T15:30:00Z"
-      },
-      {
-        "version": "1.0.0.3",
-        "changelog": "Corretto il percorso Musica in /Media/Musica.",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.3/YouTubeAudio-1.0.0.3.zip",
-        "checksum": "d2901582ad653d6a15d9bef13faa3973",
-        "timestamp": "2026-10-10T15:20:00Z"
-      },
-      {
-        "version": "1.0.0.2",
-        "changelog": "Destinazioni forzate a /Media/Music e /Media/Podcast.",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.2/YouTubeAudio-1.0.0.2.zip",
-        "checksum": "a081d2a9f4e218a21bc8e5040fa5a06b",
-        "timestamp": "2026-10-10T15:10:00Z"
-      },
-      {
-        "version": "1.0.0.1",
-        "changelog": "Destinazioni /Media/Music e /Media/Podcast preimpostate; errori della richiesta visibili.",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.1/YouTubeAudio-1.0.0.1.zip",
-        "checksum": "c24b5cb869c3ee30da9f058e86819701",
-        "timestamp": "2026-10-10T15:00:00Z"
-      },
-      {
-        "version": "1.0.0.0",
-        "targetAbi": "10.11.10.0",
-        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.0/YouTubeAudio-1.0.0.0.zip",
-        "checksum": "ca547abf8aee1a97d6bbafe483634057",
-        "timestamp": "2026-10-10T14:42:00Z"
       }
     ]
   }
