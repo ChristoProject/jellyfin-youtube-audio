@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Pinned Linux amd64 assets for linuxserver/jellyfin on amd64.
-YT_DLP_VERSION="${YT_DLP_VERSION:-2025.03.31}"
+YT_DLP_VERSION="${YT_DLP_VERSION:-2026.08.19}"
 FFMPEG_VERSION="${FFMPEG_VERSION:-release}"
 FFMPEG_URL="${FFMPEG_URL:-https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
