@@ -31,14 +31,19 @@ public sealed class DownloadWorker : BackgroundService
     {
         if (request.Items.Count == 0)
         {
+            _logger.LogInformation("YouTube Audio: analisi avviata per la richiesta {RequestId}, URL {Url}", request.Id, request.Url);
             try
             {
                 var sources = await _engine.AnalyzeAsync(request.Url, token);
                 request.Items.AddRange(sources.Select((source, index) => new QueueItem { Id = Guid.NewGuid(), RequestId = request.Id, SourceUrl = source.Url, Title = source.Title, Index = index, Category = request.Category, Status = DownloadStatus.Pending, Progress = 0 }));
                 _store.Save(request);
+                _logger.LogInformation("YouTube Audio: analisi completata per {RequestId}, {Count} elemento/i in coda", request.Id, request.Items.Count);
             }
             catch (Exception exception)
-            { AddFailure(request, "Analisi non riuscita: " + SafeError(exception)); }
+            {
+                _logger.LogError(exception, "YouTube Audio: analisi fallita per {RequestId}", request.Id);
+                AddFailure(request, "Analisi non riuscita: " + SafeError(exception));
+            }
             return;
         }
 
@@ -54,10 +59,16 @@ public sealed class DownloadWorker : BackgroundService
                 try
                 {
                     var finalPath = _writer.ReservePath(destination, item.Title, item.Category);
+                    _logger.LogInformation("YouTube Audio: download iniziato per {RequestId}, elemento {ItemId}, destinazione {Path}", request.Id, item.Id, finalPath);
                     await _engine.DownloadAsync(new SourceItem(item.SourceUrl, item.Title, item.Index), finalPath, item.Category, new Progress<int>(p => { item.Progress = p; _store.Save(request); }), token);
                     item.FinalPath = finalPath; item.Progress = 100; item.Status = DownloadStatus.Completed;
+                    _logger.LogInformation("YouTube Audio: download completato per {RequestId}, file {Path}", request.Id, finalPath);
                 }
-                catch (Exception exception) { Fail(item, SafeError(exception)); }
+                catch (Exception exception)
+                {
+                    _logger.LogError(exception, "YouTube Audio: download fallito per {RequestId}, elemento {ItemId}", request.Id, item.Id);
+                    Fail(item, SafeError(exception));
+                }
                 _store.Save(request);
             }
         }
