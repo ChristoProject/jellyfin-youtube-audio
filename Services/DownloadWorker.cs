@@ -65,15 +65,9 @@ public sealed class DownloadWorker : BackgroundService
         { request.LibraryRefreshRequested = true; _store.Save(request); await _library.RefreshAsync(token); }
     }
 
-    private string Destination(ContentCategory category)
-    {
-        var configured = category == ContentCategory.Music
-            ? Plugin.Instance?.Configuration.MusicDestination
-            : Plugin.Instance?.Configuration.PodcastDestination;
-        return string.IsNullOrWhiteSpace(configured)
-            ? category == ContentCategory.Music ? PluginConfiguration.DefaultMusicDestination : PluginConfiguration.DefaultPodcastDestination
-            : configured;
-    }
+    private static string Destination(ContentCategory category) => category == ContentCategory.Music
+        ? PluginConfiguration.DefaultMusicDestination
+        : PluginConfiguration.DefaultPodcastDestination;
     private static bool CanWrite(string path) { try { using var file = File.Open(Path.Combine(path, ".youtube-audio-write-test"), FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read); file.Close(); File.Delete(Path.Combine(path, ".youtube-audio-write-test")); return true; } catch { return false; } }
     private static void Fail(QueueItem item, string error) { item.Status = DownloadStatus.Failed; item.Error = error; item.Progress = 0; }
     private static void AddFailure(DownloadRequest request, string error) { request.Items.Add(new QueueItem { Id = Guid.NewGuid(), RequestId = request.Id, Title = "Sorgente non valida", Index = 0, Category = request.Category, Status = DownloadStatus.Failed, Error = error, Progress = 0 }); }
