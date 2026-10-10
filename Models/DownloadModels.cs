@@ -27,5 +27,5 @@ public sealed class QueueItem
     public string? FinalPath { get; set; }
 }
 
-public sealed record CreateRequestDto(string Url, ContentCategory? Category);
+public sealed record CreateRequestDto(string Url, string? Category);
 public sealed record RequestSummary(Guid Id, string Url, ContentCategory Category, IReadOnlyList<QueueItem> Items, bool Finished);
