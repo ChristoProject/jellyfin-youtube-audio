@@ -1,16 +1,19 @@
-{
-  "guid": "8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20",
-  "name": "YouTube Audio Downloader",
-  "overview": "Scarica l'audio pubblico di video e playlist YouTube",
-  "description": "Plugin Jellyfin per acquisire tracce audio da video e playlist YouTube pubblici.",
-  "owner": "ChristoProject",
-  "category": "General",
-  "versions": [
-    {
-      "version": "1.0.0.0",
-      "targetAbi": "10.11.10.0",
-      "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.0/YouTubeAudio-1.0.0.0.zip",
-      "checksum": "c5ccd5bbb1c8a3646a79631d7eb5f45f5b8de5c71aa3b37993ec8c9288098d65"
-    }
-  ]
-}
+[
+  {
+    "guid": "8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20",
+    "name": "YouTube Audio Downloader",
+    "overview": "Scarica l'audio pubblico di video e playlist YouTube",
+    "description": "Plugin Jellyfin per acquisire tracce audio da video e playlist YouTube pubblici.",
+    "owner": "ChristoProject",
+    "category": "General",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "targetAbi": "10.11.10.0",
+        "sourceUrl": "https://github.com/ChristoProject/jellyfin-youtube-audio/releases/download/v1.0.0.0/YouTubeAudio-1.0.0.0.zip",
+        "checksum": "ca547abf8aee1a97d6bbafe483634057",
+        "timestamp": "2026-10-10T14:42:00Z"
+      }
+    ]
+  }
+]
