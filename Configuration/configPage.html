@@ -6,9 +6,10 @@
   <div data-role="content"><div class="content-primary">
     <form id="youtubeAudioForm">
       <h1>YouTube Audio Downloader</h1>
-      <p>Inserisci cartelle già esistenti e accessibili dal container Jellyfin.</p>
-      <label>Destinazione musicale<input id="MusicDestination" type="text" required></label>
-      <label>Destinazione podcast<input id="PodcastDestination" type="text" required></label>
+      <p>Le destinazioni sono già impostate per il container Jellyfin:</p>
+      <ul><li>Musica: <code>/Media/Music</code></li><li>Podcast: <code>/Media/Podcast</code></li></ul>
+      <input id="MusicDestination" type="hidden" value="/Media/Music">
+      <input id="PodcastDestination" type="hidden" value="/Media/Podcast">
       <button type="submit">Salva configurazione</button>
     </form>
     <hr>
@@ -27,10 +28,10 @@
   page.addEventListener('pageshow', loadConfig);
   document.querySelector('#youtubeAudioForm').addEventListener('submit', saveConfig);
   document.querySelector('#requestForm').addEventListener('submit', createRequest);
-  async function loadConfig() { const c = await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); document.querySelector('#MusicDestination').value=c.MusicDestination||''; document.querySelector('#PodcastDestination').value=c.PodcastDestination||''; refresh(); }
-  async function saveConfig(e) { e.preventDefault(); const c=await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); c.MusicDestination=document.querySelector('#MusicDestination').value; c.PodcastDestination=document.querySelector('#PodcastDestination').value; await ApiClient.updatePluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20',c); Dashboard.alert('Configurazione salvata'); }
-  async function createRequest(e) { e.preventDefault(); const r=await ApiClient.ajax({type:'POST',url:ApiClient.getUrl('YouTubeAudio/requests'),data:JSON.stringify({url:document.querySelector('#sourceUrl').value,category:document.querySelector('#category').value}),contentType:'application/json'}); Dashboard.alert('Richiesta avviata: '+r); refresh(); }
-  async function refresh() { const data=await ApiClient.getJSON(ApiClient.getUrl('YouTubeAudio/requests')); requests.innerHTML=data.map(r=>'<section><h3>'+escapeHtml(r.url)+'</h3>'+r.items.map(i=>'<p>'+escapeHtml(i.title)+' — '+i.status+' ('+i.progress+'%)'+(i.error?' — '+escapeHtml(i.error):'')+'</p>').join('')+'</section>').join(''); setTimeout(refresh,3000); }
+  async function loadConfig() { const c = await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); document.querySelector('#MusicDestination').value=c.MusicDestination||'/Media/Music'; document.querySelector('#PodcastDestination').value=c.PodcastDestination||'/Media/Podcast'; refresh(); }
+  async function saveConfig(e) { e.preventDefault(); try { const c=await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); c.MusicDestination=document.querySelector('#MusicDestination').value; c.PodcastDestination=document.querySelector('#PodcastDestination').value; await ApiClient.updatePluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20',c); Dashboard.alert('Configurazione salvata'); } catch (error) { Dashboard.alert('Impossibile salvare la configurazione: '+error); } }
+  async function createRequest(e) { e.preventDefault(); try { const response=await ApiClient.ajax({type:'POST',url:ApiClient.getUrl('YouTubeAudio/requests'),data:JSON.stringify({url:document.querySelector('#sourceUrl').value,category:document.querySelector('#category').value}),contentType:'application/json',dataType:'json'}); Dashboard.alert('Richiesta avviata'); refresh(); } catch (error) { Dashboard.alert('Download non avviato: controlla categoria, URL e destinazioni. '+error); } }
+  async function refresh() { try { const data=await ApiClient.getJSON(ApiClient.getUrl('YouTubeAudio/requests')); const requestsElement=document.querySelector('#requests'); requestsElement.innerHTML=data.map(r=>'<section><h3>'+escapeHtml(r.url)+'</h3>'+r.items.map(i=>'<p>'+escapeHtml(i.title)+' — '+i.status+' ('+i.progress+'%)'+(i.error?' — '+escapeHtml(i.error):'')+'</p>').join('')+'</section>').join(''); } catch (error) { console.error('YouTube Audio: impossibile leggere le richieste', error); } finally { setTimeout(refresh,3000); } }
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 })();
 </script>
