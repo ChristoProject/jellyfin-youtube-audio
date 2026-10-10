@@ -1,0 +1,90 @@
+name: Release plugin Jellyfin
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Installa dipendenze native
+        run: ./tools/fetch-native-assets.sh
+
+      - name: Pubblica plugin
+        run: dotnet publish --configuration Release --output publish
+
+      - name: Crea archivio Jellyfin
+        id: package
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          package="YouTubeAudio-${version}.zip"
+          (cd publish && zip -qr "../${package}" .)
+          sha256sum "${package}" > "${package}.sha256"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "package=${package}" >> "$GITHUB_OUTPUT"
+
+      - name: Crea GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "${{ steps.package.outputs.package }}" \
+            "${{ steps.package.outputs.package }}.sha256" \
+            --title "YouTube Audio Downloader ${{ steps.package.outputs.version }}" \
+            --generate-notes
+
+      - name: Aggiorna il manifest del repository
+        env:
+          PACKAGE: ${{ steps.package.outputs.package }}
+          VERSION: ${{ steps.package.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          package = os.environ["PACKAGE"]
+          version = os.environ["VERSION"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          source_url = f"https://github.com/{repo}/releases/download/v{version}/{package}"
+          checksum = hashlib.sha256(Path(package).read_bytes()).hexdigest()
+
+          path = Path("manifest.json")
+          manifest = json.loads(path.read_text())
+          versions = [v for v in manifest.get("versions", []) if v.get("version") != version]
+          versions.insert(0, {
+              "version": version,
+              "targetAbi": "10.11.10.0",
+              "sourceUrl": source_url,
+              "checksum": checksum
+          })
+          manifest["versions"] = versions[:5]
+          path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+          PY
+
+      - name: Pubblica il manifest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Aggiorna manifest alla versione ${{ steps.package.outputs.version }}"
+          git push origin HEAD:main

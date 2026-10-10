@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="utf-8"><title>YouTube Audio Downloader</title></head>
+<body>
+<div id="youtubeAudioPage" data-role="page" class="page type-interior pluginConfigurationPage">
+  <div data-role="content"><div class="content-primary">
+    <form id="youtubeAudioForm">
+      <h1>YouTube Audio Downloader</h1>
+      <p>Inserisci cartelle già esistenti e accessibili dal container Jellyfin.</p>
+      <label>Destinazione musicale<input id="MusicDestination" type="text" required></label>
+      <label>Destinazione podcast<input id="PodcastDestination" type="text" required></label>
+      <button type="submit">Salva configurazione</button>
+    </form>
+    <hr>
+    <form id="requestForm">
+      <h2>Nuova richiesta</h2>
+      <label>URL YouTube<input id="sourceUrl" type="url" required></label>
+      <label>Categoria<select id="category" required><option value="">Scegli...</option><option value="Music">Musica</option><option value="Podcast">Podcast</option></select></label>
+      <button type="submit">Analizza e avvia</button>
+    </form>
+    <div id="requests"></div>
+  </div></div>
+</div>
+<script>
+(function () {
+  const page = document.querySelector('#youtubeAudioPage');
+  page.addEventListener('pageshow', loadConfig);
+  document.querySelector('#youtubeAudioForm').addEventListener('submit', saveConfig);
+  document.querySelector('#requestForm').addEventListener('submit', createRequest);
+  async function loadConfig() { const c = await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); document.querySelector('#MusicDestination').value=c.MusicDestination||''; document.querySelector('#PodcastDestination').value=c.PodcastDestination||''; refresh(); }
+  async function saveConfig(e) { e.preventDefault(); const c=await ApiClient.getPluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20'); c.MusicDestination=document.querySelector('#MusicDestination').value; c.PodcastDestination=document.querySelector('#PodcastDestination').value; await ApiClient.updatePluginConfiguration('8c1c54f0-2df1-4e8d-9e34-0c5d4f2cbb20',c); Dashboard.alert('Configurazione salvata'); }
+  async function createRequest(e) { e.preventDefault(); const r=await ApiClient.ajax({type:'POST',url:ApiClient.getUrl('YouTubeAudio/requests'),data:JSON.stringify({url:document.querySelector('#sourceUrl').value,category:document.querySelector('#category').value}),contentType:'application/json'}); Dashboard.alert('Richiesta avviata: '+r); refresh(); }
+  async function refresh() { const data=await ApiClient.getJSON(ApiClient.getUrl('YouTubeAudio/requests')); requests.innerHTML=data.map(r=>'<section><h3>'+escapeHtml(r.url)+'</h3>'+r.items.map(i=>'<p>'+escapeHtml(i.title)+' — '+i.status+' ('+i.progress+'%)'+(i.error?' — '+escapeHtml(i.error):'')+'</p>').join('')+'</section>').join(''); setTimeout(refresh,3000); }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+})();
+</script>
+</body></html>

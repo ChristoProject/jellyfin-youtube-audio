@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Jellyfin.Plugin.YouTubeAudio.csproj" />
+  <Project Path="Tests/Jellyfin.Plugin.YouTubeAudio.Tests.csproj" />
+</Solution>

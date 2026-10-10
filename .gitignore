@@ -1,0 +1,12 @@
+bin/
+obj/
+.vscode/
+TestResults/
+*.user
+*.suo
+*.nupkg
+core
+
+dist/
+NativeAssets/linux-x64/*
+!NativeAssets/linux-x64/.gitkeep
